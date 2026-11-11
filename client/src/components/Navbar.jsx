@@ -1,0 +1,11 @@
+import { useState } from 'react';
+import { ShoppingBag, Flame, UserRound, Menu, X, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+export default function Navbar({cartCount,onCart,onAuth,user}) {
+ const [open,setOpen]=useState(false),[profile,setProfile]=useState(false);
+ const links=[['Menu','#menu'],['Our story','#story'],['Build a burger','#builder']];
+ return <header className="nav-wrap"><nav className="nav container"><a className="brand" href="#home"><span className="brand-mark"><Flame size={23} fill="currentColor"/></span><span>NZZ<span className="orange">.</span><small>FASTFOOD</small></span></a>
+ <div className="nav-links">{links.map(([t,h])=><a key={t} href={h}>{t}</a>)}</div>
+ <div className="nav-actions"><div className="profile-wrap"><button className="icon-btn" onClick={()=>user?setProfile(!profile):onAuth()} aria-label="Account"><UserRound size={19}/></button><AnimatePresence>{profile&&<motion.div className="profile-menu" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:8}}><b>{user?.name||'Guest'}</b><span>{user?.email||'Welcome to NZZ'}</span><hr/><strong className="profile-label">Recent orders</strong>{(user?.orders||[]).slice(0,2).map(o=><span key={o.id}>#{o.id} · {Number(o.total||0).toLocaleString('uz-UZ')} so'm</span>)}{(!user?.orders||user.orders.length===0)&&<span>No orders yet</span>}<strong className="profile-label">Saved addresses</strong>{(user?.savedAddresses||[]).map(a=><span key={a}>{a}</span>)}{(!user?.savedAddresses||user.savedAddresses.length===0)&&<span>No saved addresses</span>}<hr/><button onClick={()=>{setProfile(false);onAuth()}}>Account settings <ChevronDown size={14}/></button></motion.div>}</AnimatePresence></div><button className="cart-nav" onClick={onCart}><ShoppingBag size={18}/> <span>Cart</span><b>{cartCount}</b></button><button className="mobile-menu" onClick={()=>setOpen(!open)} aria-label="Toggle menu">{open?<X/>:<Menu/>}</button></div></nav>
+ <AnimatePresence>{open&&<motion.div className="mobile-links" initial={{height:0}} animate={{height:'auto'}} exit={{height:0}}>{links.map(([t,h])=><a key={t} href={h} onClick={()=>setOpen(false)}>{t}</a>)}</motion.div>}</AnimatePresence></header>
+}
